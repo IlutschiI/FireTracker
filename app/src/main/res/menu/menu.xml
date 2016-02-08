@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/route" android:title="start Route"/>
+    <item android:id="@+id/stoproute" android:title="stop Route"/>
+    <item android:id="@+id/followPoint" android:title="Position verfolgen"/>
+    <item android:id="@+id/setName" android:title="Fahrzeugname setzen"/>
+    <item android:id="@+id/notFollowPoint" android:title="Position nicht verfolgen"/>
+</menu>

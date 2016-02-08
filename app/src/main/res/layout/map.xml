@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:layout_weight="80">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:text="Geräte"
+            android:layout_weight="0.5"
+            android:id="@+id/btG" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:text="Fahrtenbuch"
+            android:layout_weight="0.5"
+            android:id="@+id/btFB" />
+
+    </LinearLayout>
+
+    <fragment
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="445dp" android:id="@+id/map" tools:context=".MapsActivity"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_weight="10" >
+
+            <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:text="Satellite"
+            android:layout_marginRight="82dp"
+            android:id="@+id/btSatellite"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|top"
+                android:text="Normal"
+                android:id="@+id/btNormal"/>
+
+    </fragment>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="75">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Einsatzort:"
+            android:id="@+id/tvLoc"
+            android:textSize="20dp"
+            android:maxLines="2"
+            android:minLines="2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Verbleibende KM:"
+            android:id="@+id/tvKM"
+            android:singleLine="true"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+</LinearLayout>
