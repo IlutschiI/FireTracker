@@ -89,9 +89,9 @@ public class DetailLogbook extends FragmentActivity {
         }
 
 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.finishFlag))
-        mMap.addMarker(new MarkerOptions().position(list.get(0)));
-        mMap.addMarker(new MarkerOptions().position(list.get(list.size() - 1)).icon(BitmapDescriptorFactory.fromResource(android.R.drawable.presence_busy)));
-        mMap.addPolyline(new PolylineOptions().addAll(list)); // Route zeichnen (mit allen Koordinaten)
+        mMap.addMarker(new MarkerOptions().position(list.get(0)).icon(BitmapDescriptorFactory.fromResource(R.drawable.start_marker)));
+        mMap.addMarker(new MarkerOptions().position(list.get(list.size() - 1)).icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_marker)));
+        mMap.addPolyline(new PolylineOptions().addAll(list).color(getBaseContext().getResources().getColor(R.color.wallet_holo_blue_light))); // Route zeichnen (mit allen Koordinaten)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0),12));// Kamer ausrichten
 
         double distance=0;

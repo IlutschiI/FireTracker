@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FireTracker.iml" filepath="$PROJECT_DIR$/FireTracker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FireTrackerGit.iml" filepath="$PROJECT_DIR$/FireTrackerGit.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -106,7 +106,7 @@ public class WebSocket {
                         case 10: // ist er 10, bedeutet das, dass der Server das Tracking ein- (true) oder ausschalten (false) möchte
                             Gps_tracking.setTrackingEnabled(json.optBoolean("tracking",true));
                             break;
-                        case 11:
+                        case 11: // alle möglichen Fahrzeuge werden abgefragt
                             JSONArray devices = json.optJSONArray("devices");
                             allDevices.clear();
                             for (int i =0;i<devices.length();i++){
@@ -282,7 +282,7 @@ public class WebSocket {
     public void reconnect(){
         mConnection.disconnect();
         try {
-            mConnection.connect(ip+MapsActivity.deviceName,webSocketHandler);
+            mConnection.connect("ws://"+ip+MapsActivity.deviceName,webSocketHandler);
         } catch (WebSocketException e) {
             e.printStackTrace();
         }

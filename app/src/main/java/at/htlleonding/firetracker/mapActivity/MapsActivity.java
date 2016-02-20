@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -63,6 +65,7 @@ public class MapsActivity extends FragmentActivity {
     LatLng emergencyLatLng;
     public static String deviceName="";
     public static boolean isInDialog=false;
+    private static boolean isInRoute=true;
     //endregion
 
     //region Broadcast GPS_Update
@@ -73,7 +76,7 @@ public class MapsActivity extends FragmentActivity {
             if(WebSocket.isConnected)
                 actionBar.setSubtitle("Connected");
             else
-                actionBar.setSubtitle("notConnected");
+                actionBar.setSubtitle("not Connected");
 
             System.out.println("BroadcastReceiver --------------------------------------------------");
 
@@ -91,7 +94,7 @@ public class MapsActivity extends FragmentActivity {
                 LatLng start = currentPos.getPosition(); // aktuelle Position
                 // Parst die Route in ein Objekt
                 Document d = directions.getDocument(start, emergencyLatLng, "DRIVING");
-                if(emergencyRoute!=null) {
+                if(emergencyRoute!=null&&isOnline()) {
                     emergencyRoute.remove(); // Route wird gelöscht
                     // um dann auf neue Position zu aktualisieren
                     emergencyRoute = mMap.addPolyline(new PolylineOptions().addAll(directions.getDirection(d)).color(R.color.wallet_holo_blue_light).width(12));
@@ -121,6 +124,25 @@ public class MapsActivity extends FragmentActivity {
             GMapDirections directions = new GMapDirections();
             LatLng start = currentPos.getPosition(); // Hier wird die Startposition gespeichert
             emergencyLatLng = new LatLng(intent.getDoubleExtra("x_coordinate", 1), intent.getDoubleExtra("y_coordinate", 1)); // Koordinaten zum Zielpunkt
+
+            if(isInRoute)
+            {
+                final Dialog d = new Dialog(MapsActivity.this);
+                d.setContentView(R.layout.finish_route_dialog);
+                ((Button)d.findViewById(R.id.btDialogFinishRoute)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String destination = ((TextView) d.findViewById(R.id.etDialogFinishRoute)).getText().toString();
+                        WebSocket.getInstance(getApplication()).finishNewRoute(destination);
+                        WebSocket.getInstance(getApplication()).createNewRoute();
+                        d.dismiss();
+                    }
+                });
+                d.setCancelable(false);
+                d.setCanceledOnTouchOutside(false);
+                d.show();
+
+            }
 
             Gps_tracking.setTrackingEnabled(true); // GPS-Tracking wird eingeschaltet (über stopRoute im OptionsMenu ausschaltbar)
             invalidateOptionsMenu();
@@ -171,6 +193,13 @@ public class MapsActivity extends FragmentActivity {
     };
 //endregion
 
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -205,6 +234,7 @@ public class MapsActivity extends FragmentActivity {
         switch(item.getItemId()){
             case R.id.route:
                 //ToDo: start Route
+                isInRoute=true;
                 Gps_tracking.setTrackingEnabled(true);
                 WebSocket.getInstance(this.getApplication()).createNewRoute();
                 break;
@@ -212,24 +242,12 @@ public class MapsActivity extends FragmentActivity {
                 if(emergencyRoute!=null)
                 emergencyRoute.remove();
                 isEmergency=false;
-
+                isInRoute=false;
                 Gps_tracking.setTrackingEnabled(false);
                 tvKM.setText("Verbleibende Kilometer: ");
                 tvLoc.setText("Einsatzort: ");
 
-                final Dialog d = new Dialog(MapsActivity.this);
-                d.setContentView(R.layout.finish_route_dialog);
-                ((Button)d.findViewById(R.id.btDialogFinishRoute)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String destination=((TextView)d.findViewById(R.id.etDialogFinishRoute)).getText().toString();
-                        WebSocket.getInstance(getApplication()).finishNewRoute(destination);
-                        d.dismiss();
-                    }
-                });
-                d.setCancelable(false);
-                d.setCanceledOnTouchOutside(false);
-                d.show();
+                completeRoute();
 
 
                 break;
@@ -248,6 +266,22 @@ public class MapsActivity extends FragmentActivity {
 
         invalidateOptionsMenu();
         return true;
+    }
+
+    public void completeRoute(){
+        final Dialog d = new Dialog(MapsActivity.this);
+        d.setContentView(R.layout.finish_route_dialog);
+        ((Button)d.findViewById(R.id.btDialogFinishRoute)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String destination=((TextView)d.findViewById(R.id.etDialogFinishRoute)).getText().toString();
+                WebSocket.getInstance(getApplication()).finishNewRoute(destination);
+                d.dismiss();
+            }
+        });
+        d.setCancelable(false);
+        d.setCanceledOnTouchOutside(false);
+        d.show();
     }
 
     @Override
