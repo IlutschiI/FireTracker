@@ -24,7 +24,7 @@ public class    Gps_tracking extends IntentService {
 
     LocationManager locationManager;
     String provider;
-    private static boolean trackingEnabled=true;
+    private static boolean trackingEnabled=false;
     private LinkedList<Location> notSentLocations;
 
 
