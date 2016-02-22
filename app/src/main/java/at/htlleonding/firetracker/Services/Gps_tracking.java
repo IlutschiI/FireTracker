@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.LinkedList;
 
 import at.htlleonding.firetracker.webSocket.WebSocket;
 import de.tavendo.autobahn.WebSocketConnection;
@@ -22,6 +25,7 @@ public class    Gps_tracking extends IntentService {
     LocationManager locationManager;
     String provider;
     private static boolean trackingEnabled=true;
+    private LinkedList<Location> notSentLocations;
 
 
     // Konstruktor
@@ -31,7 +35,7 @@ public class    Gps_tracking extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        notSentLocations=new LinkedList<>();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE); // Wie genau die Standortbestimmung ist (FEIN)
@@ -77,10 +81,17 @@ public class    Gps_tracking extends IntentService {
                 i.putExtra("y_coordinate", location.getLatitude()); // Y-Coordinate der aktuellen Position
                 if (trackingEnabled) { // Wenn das GPS-Tracking eingeschaltet ist..
                     sendBroadcast(i);// ...wird der Broadcast gesendet
-                    socket.sendLocation(location); // Dem WebSocket wird die aktuelle Position gesendet
-                }
-                Toast.makeText(getApplicationContext(), "location sent", Toast.LENGTH_LONG).show();
+                    notSentLocations.add(location);
+                    if(WebSocket.isConnected) {
+                        for (Location loc :
+                                notSentLocations) {
+                            socket.sendLocation(loc); // Dem WebSocket wird die aktuelle Position gesendet
+                        }
+                        notSentLocations.clear();
 
+                    }
+
+                }
                 System.out.println("" + location.getLatitude() + " : " + location.getLongitude());
             } else
                 Toast.makeText(getApplicationContext(), "no Location found", Toast.LENGTH_LONG).show();
