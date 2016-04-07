@@ -102,7 +102,7 @@ public class LogbookActivity extends Activity {
                 List<Logbook> logs = new ArrayList<>();
                 // Sucht alle Elemente in der Liste, die den Buchstaben im Filter in dem Zielort enthalten
                 for (Logbook item : list) {
-                    if (String.valueOf(item.getDestination()).contains(s.toString())) {
+                    if (String.valueOf(item.getDestination().toUpperCase()).contains(s.toString().toUpperCase())) {
                         logs.add(item); // Alle Treffer werden in eine Liste gespeichert...
                     }
                 }

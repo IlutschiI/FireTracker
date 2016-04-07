@@ -28,7 +28,7 @@ public class EquipmentActivity extends Activity {
     EditText etFilterEquip;
     Intent i;
 
-    ArrayList<Equipment> list;
+    ArrayList<Equipment> list=new ArrayList<>();
 
     // BroadcastReceiver
     BroadcastReceiver onLoadedFinish = new BroadcastReceiver() {
@@ -45,10 +45,7 @@ public class EquipmentActivity extends Activity {
         registerReceiver(onLoadedFinish, new IntentFilter("EquipmentsLoaded"));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.equipmentlay);
-        list=new ArrayList<>();
 
-
-        final ArrayList<Equipment> list = new ArrayList<>();
         lv=(ListView)findViewById(R.id.listView);
 
         // Wenn auf ein Element in der ListView gedrückt wird
@@ -79,9 +76,10 @@ public class EquipmentActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 List<Equipment> equips = new ArrayList<>();
+
                 // Sucht Elemente, die selben String wie der Filter enthalten
                 for (Equipment item : list) {
-                    if (String.valueOf(item.getEquipName()).contains(s.toString())) {
+                    if (String.valueOf(item.getEquipName().toUpperCase()).contains(s.toString().toUpperCase())) {
                         equips.add(item);
                     }
                 }

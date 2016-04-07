@@ -13,6 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.NotYetConnectedException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +32,10 @@ import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 import de.tavendo.autobahn.WebSocketOptions;
 
+
+
 public class WebSocket {
+
 
     public static boolean isConnected=false;
 
@@ -121,6 +128,7 @@ public class WebSocket {
                         case 6: // ist er 6, wird in eine Liste von Fahrtenbuch-Einträgen alle Routen gespeichert
                             // Leeren der Liste, um keine Routen doppelt in der Liste zu haben
                             allLogBooks.clear();
+                            System.out.println(json.toString());
                             JSONArray routes = json.getJSONArray("routes"); // JsonArray mit allen Routen
                             JSONObject obj;
                             String destination; // Zielort
@@ -216,16 +224,12 @@ public class WebSocket {
             instance=new WebSocket(c);
         if(!isConnected||!instance.mConnection.isConnected()){
             try {
-                new Handler(c.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Toast.makeText(c.getBaseContext(), "no connection to server, trying to reconnect...", Toast.LENGTH_LONG).show();
-                    }
-                });
+
                instance.mConnection.connect("ws://"+ip+ MapsActivity.deviceName,instance.webSocketHandler);
 
             } catch (WebSocketException e) {
                 e.printStackTrace();
+                instance.reconnect();
             }
         }
 
@@ -261,6 +265,7 @@ public class WebSocket {
 
     // Sende Server, dass er alle Routen übertragen soll
     public void requestRoutes(){
+        boolean con= mConnection.isConnected();
         if(mConnection.isConnected()) {
             mConnection.sendTextMessage("{diskriminator:6}");
         }
